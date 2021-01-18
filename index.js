@@ -21,34 +21,38 @@ const Sheet = require('./sheet');
       const description = i.find('.tileDescription').text()
       let score = i.find('.scoreTag').first().text().split('mo')[1]
 
-      // Calculate actual score modifier (M or K)
-      if (score != undefined) {
-        const scoreMult = score.substr(score.length-1,1).toLowerCase()
-        if ( (+score).toString() == "NaN" ) {
-          score = score.substr(0, score.length-1)
-          if (scoreMult == "k") score *= 1000
-          if (scoreMult == "m") score *= 1000000 
-        }
-      }
+      score = calculateScoreModifier(score);
+
       return {keyword, description, score}
     })
 
     allTrends.push(...trends)
+    
     console.log({page})
     page++
   // } while (containers.length > 0)
-  } while (page < 1)
+  } while (page < 1) // for testing
     
   // console.log({allTrends})
   console.log(`Pages Processed:${page}`)
-
-  // const sheet = new Sheet()
-  // await sheet.load()
-  // sheet.clearSheet()
-  // sheet.addRows(allTrends)
 
   const sheet = new Sheet()
   await sheet.load()
   sheet.addNewRowsAndIgnoreExistingDuplicates(allTrends)
 
 })();
+
+// Calculate actual score with modifier (trailing M or K)
+function calculateScoreModifier(score) {
+  if (score != undefined) {
+    const scoreMult = score.substr(score.length - 1, 1).toLowerCase();
+    if ((+score).toString() == "NaN") {
+      score = score.substr(0, score.length - 1);
+      if (scoreMult == "k")
+        score *= 1000;
+      if (scoreMult == "m")
+        score *= 1000000;
+    }
+  }
+  return score;
+}
