@@ -40,7 +40,7 @@ class Sheet {
                 }
             }
             if (!duplicate) {
-                let rowObject = {}
+                const rowObject = {}
                 for(let [i, header] of existRow._sheet.headerValues.entries()) {
                     rowObject[header] = existRow._rawData[i]
                 }
