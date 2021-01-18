@@ -2,6 +2,16 @@ const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 const Sheet = require('./sheet');
 
+// Scrape source: https://explodingtopics.com/topics-last-6-months?page=1
+
+// Credentials
+// https://console.cloud.google.com/apis/credentials?project=returnz-tester-215418
+
+// https://theoephraim.github.io/node-google-spreadsheet/#/classes/google-spreadsheet-worksheet?id=fn-setheaderrow
+// https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/request#setbasicfilterrequest
+// https://developers.google.com/apps-script/articles/removing_duplicates
+
+
 (async () => {
   let page = 1
   let allTrends = []
@@ -12,7 +22,7 @@ const Sheet = require('./sheet');
     const text = await res.text()
     const $ = cheerio.load(text)
 
-    containers =  $('.topicInfoContainer').toArray()
+    containers = $('.topicInfoContainer').toArray()
     if (containers.length == 0) break;
 
     const trends = containers.map( c => {
@@ -27,11 +37,11 @@ const Sheet = require('./sheet');
     })
 
     allTrends.push(...trends)
-    
+
     console.log({page})
     page++
-  // } while (containers.length > 0)
-  } while (page < 1) // for testing
+  } while (containers.length > 0)
+  // } while (page < 1) // for testing
     
   // console.log({allTrends})
   console.log(`Pages Processed:${page}`)
@@ -46,7 +56,7 @@ const Sheet = require('./sheet');
 function calculateScoreModifier(score) {
   if (score != undefined) {
     const scoreMult = score.substr(score.length - 1, 1).toLowerCase();
-    if ((+score).toString() == "NaN") {
+    if ((+score).toString() == "NaN") { // Check if it's has a trailing character
       score = score.substr(0, score.length - 1);
       if (scoreMult == "k")
         score *= 1000;
