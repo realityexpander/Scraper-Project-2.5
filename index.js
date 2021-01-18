@@ -3,33 +3,52 @@ const cheerio = require('cheerio');
 const Sheet = require('./sheet');
 
 (async () => {
-  const res = await fetch('https://explodingtopics.com/topics-last-6-months')
-  const text = await res.text()
-  const $ = cheerio.load(text)
+  let page = 1
+  let allTrends = []
+  let containers
 
-  const containers =  $('.topicInfoContainer').toArray()
-  const trends = containers.map( c => {
-    const i = $(c)
-    const keyword = i.find('.tileKeyword').text()
-    const description = i.find('.tileDescription').text()
-    let score = i.find('.scoreTag').first().text().split('mo')[1]
+  do {
+    const res = await fetch(`https://explodingtopics.com/topics-last-6-months?page=${page}`)
+    const text = await res.text()
+    const $ = cheerio.load(text)
 
-    // Correct by score modifier (M or K)
-    if (score != undefined) {
-      const scoreMult = score.substr(score.length-1,1).toLowerCase()
-      if ( (+score).toString() == "NaN" ) {
-        score = score.substr(0, score.length-1)
-        if (scoreMult == "k") score *= 1000
-        if (scoreMult == "m") score *= 1000000 
+    containers =  $('.topicInfoContainer').toArray()
+    if (containers.length == 0) break;
+
+    const trends = containers.map( c => {
+      const i = $(c)
+      const keyword = i.find('.tileKeyword').text()
+      const description = i.find('.tileDescription').text()
+      let score = i.find('.scoreTag').first().text().split('mo')[1]
+
+      // Calculate actual score modifier (M or K)
+      if (score != undefined) {
+        const scoreMult = score.substr(score.length-1,1).toLowerCase()
+        if ( (+score).toString() == "NaN" ) {
+          score = score.substr(0, score.length-1)
+          if (scoreMult == "k") score *= 1000
+          if (scoreMult == "m") score *= 1000000 
+        }
       }
-    }
-    return {keyword, description, score}
-  })
+      return {keyword, description, score}
+    })
 
-  console.log({trends})
+    allTrends.push(...trends)
+    console.log({page})
+    page++
+  } while (containers.length > 0)
+  // } while (page < 1)
+    
+  // console.log({allTrends})
+  console.log(`Pages Processed:${page}`)
+
+  // const sheet = new Sheet()
+  // await sheet.load()
+  // sheet.clearSheet()
+  // sheet.addRows(allTrends)
 
   const sheet = new Sheet()
   await sheet.load()
-  sheet.addRows(trends)
+  sheet.addNewRowsAndIgnoreExistingDuplicates(allTrends)
 
 })();

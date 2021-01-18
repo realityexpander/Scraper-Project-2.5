@@ -15,6 +15,48 @@ class Sheet {
         await sheet.addRows(rows);
     }
 
+    async clearSheet() {
+        const sheet = this.doc.sheetsByIndex[0];
+        let headerValues = sheet.headerValues
+        await sheet.clear()
+        await sheet.setHeaderRow(headerValues)
+    }
+
+    async addNewRowsAndIgnoreExistingDuplicates(newRows) {
+        const sheet = this.doc.sheetsByIndex[0];
+        const existingRows = await sheet.getRows()
+        let headerValues = sheet.headerValues
+        let numDuplicates = 0
+
+        // Add existingRows to bottom of newRows, only if no duplicates
+        for(let existRow of existingRows) {
+            let duplicate = false
+            for(let newRow of newRows) {
+                if (newRow.keyword == existRow.keyword) {
+                    // console.log("Duplicate:", existRow.keyword)
+                    numDuplicates++
+                    duplicate = true
+                    break
+                }
+            }
+            if (!duplicate) {
+                let rowObject = {}
+                let i=0
+                for(let header of existRow._sheet.headerValues) {
+                    rowObject[header] = existRow._rawData[i++]
+                }
+                newRows.push(rowObject)
+            }
+        }
+
+        // console.log(newData)
+        // console.log("Total duplicates: ${numDuplicates}")
+
+        await sheet.clear()
+        await sheet.setHeaderRow(headerValues)
+        await sheet.addRows(newRows)
+    }
+
 }
 
 
