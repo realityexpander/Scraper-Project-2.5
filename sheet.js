@@ -41,16 +41,14 @@ class Sheet {
             }
             if (!duplicate) {
                 let rowObject = {}
-                let i=0
-                for(let header of existRow._sheet.headerValues) {
-                    rowObject[header] = existRow._rawData[i++]
+                for(let [i, header] of existRow._sheet.headerValues.entries()) {
+                    rowObject[header] = existRow._rawData[i]
                 }
                 newRows.push(rowObject)
             }
         }
 
-        // console.log(newData)
-        // console.log("Total duplicates: ${numDuplicates}")
+        console.log(`Total duplicates: ${numDuplicates}`)
 
         await sheet.clear()
         await sheet.setHeaderRow(headerValues)

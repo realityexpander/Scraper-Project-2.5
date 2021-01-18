@@ -36,8 +36,8 @@ const Sheet = require('./sheet');
     allTrends.push(...trends)
     console.log({page})
     page++
-  } while (containers.length > 0)
-  // } while (page < 1)
+  // } while (containers.length > 0)
+  } while (page < 1)
     
   // console.log({allTrends})
   console.log(`Pages Processed:${page}`)
