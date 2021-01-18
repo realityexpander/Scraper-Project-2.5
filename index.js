@@ -25,7 +25,7 @@ const Sheet = require('./sheet');
     containers = $('.topicInfoContainer').toArray()
     if (containers.length == 0) break;
 
-    const trends = containers.map( c => {
+    const trendsForPage = containers.map( c => {
       const i = $(c)
       const keyword = i.find('.tileKeyword').text()
       const description = i.find('.tileDescription').text()
@@ -36,7 +36,7 @@ const Sheet = require('./sheet');
       return {keyword, description, score}
     })
 
-    allTrends.push(...trends)
+    allTrends.push(...trendsForPage)
 
     console.log({page})
     page++
