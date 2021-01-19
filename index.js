@@ -2,12 +2,16 @@ const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 const Sheet = require('./sheet');
 
-// Scrape source: https://explodingtopics.com/topics-last-6-months?page=1
+// Scrape source: Exploding Topics
+// https://explodingtopics.com/topics-last-6-months?page=1
 
-// Credentials
+// Google Credentials
 // https://console.cloud.google.com/apis/credentials?project=returnz-tester-215418
 
+// Google Spreadsheet
 // https://theoephraim.github.io/node-google-spreadsheet/#/classes/google-spreadsheet-worksheet?id=fn-setheaderrow
+
+// Spreadsheet dev notes
 // https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/request#setbasicfilterrequest
 // https://developers.google.com/apps-script/articles/removing_duplicates
 
